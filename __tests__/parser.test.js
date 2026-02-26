@@ -153,7 +153,7 @@ describe('Parser Tests', () => {
     });
 
     test('should handle arithmetic with floating point and scientific numbers', () => {
-      expect(parse("2.35e-3 + 1")).toBe(1.00235);
+      expect(parse("2.35e-3 + 1 // suma")).toBe(1.00235);
       expect(parse("10.5 * 2")).toBe(21);
       expect(parse("1.5e2 / 2")).toBe(75);
     });

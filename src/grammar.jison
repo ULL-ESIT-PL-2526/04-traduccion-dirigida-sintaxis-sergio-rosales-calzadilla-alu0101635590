@@ -2,7 +2,7 @@
 %lex
 %%
 \s+                                  { /* skip whitespace */; }
-\/\/.*                               { /* skip whitespace */; }
+\/\/[^\n]*                           { /* skip whitespace */; }
 [0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?  { return 'NUMBER';       }
 "**"                                 { return 'OP';           }
 [-+*/]                               { return 'OP';           }
