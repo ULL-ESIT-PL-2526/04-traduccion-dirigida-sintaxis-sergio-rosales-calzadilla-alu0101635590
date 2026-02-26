@@ -110,7 +110,7 @@ describe('Parser Tests', () => {
       expect(() => parse("3 +")).toThrow();
       expect(() => parse("+ 3")).toThrow();
       expect(() => parse("3 + + 4")).toThrow();
-      expect(() => parse("3.5")).toThrow(); // Only integers are supported
+      // expect(() => parse("3.5")).toThrow(); // Only integers are supported
     });
 
     test('should handle incomplete expressions', () => {
@@ -127,5 +127,35 @@ describe('Parser Tests', () => {
       expect(parse("7 - 5 - 1")).toBe(1);
     });
   });
+  
+  describe('Floating point and scientific notation (Punto 4)', () => {
+    test('should parse simple decimal numbers', () => {
+      expect(parse("2.35")).toBe(2.35);
+      expect(parse("3.5")).toBe(3.5);
+      expect(parse("0.001")).toBe(0.001);
+    });
 
+    test('should handle scientific notation with lowercase "e"', () => {
+      expect(parse("2.35e-3")).toBe(0.00235); 
+      expect(parse("2.35e+3")).toBe(2350); 
+      expect(parse("5e2")).toBe(500);
+    });
+
+    test('should handle scientific notation with uppercase "E"', () => {
+      expect(parse("2.35E-3")).toBe(0.00235); 
+      expect(parse("1.2E+2")).toBe(120);
+      expect(parse("10E3")).toBe(10000);
+    });
+
+    test('should parse integers correctly (still supported)', () => {
+      expect(parse("23")).toBe(23); 
+      expect(parse("100")).toBe(100);
+    });
+
+    test('should handle arithmetic with floating point and scientific numbers', () => {
+      expect(parse("2.35e-3 + 1")).toBe(1.00235);
+      expect(parse("10.5 * 2")).toBe(21);
+      expect(parse("1.5e2 / 2")).toBe(75);
+    });
+  });
 });
