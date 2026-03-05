@@ -4,15 +4,19 @@
 \s+                                  { /* skip whitespace */; }
 \/\/[^\n]*                           { /* skip whitespace */; }
 [0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?  { return 'NUMBER';       }
-"**"                                 { return 'OP';           }
-[-+*/]                               { return 'OP';           }
+"**"                                 { return 'OPOW';         }
+[-+]                                 { return 'OPAD';         }
+[*/]                                 { return 'OPMU';         }
+"("                                  { return 'LPAREN';       }
+")"                                  { return 'RPAREN';       }
 <<EOF>>                              { return 'EOF';          }
 .                                    { return 'INVALID';      }
 /lex
 
 /* Parser */
 %start expressions
-%token NUMBER
+%token NUMBER OPAD OPMU OPOW LPAREN RPAREN
+
 %%
 
 expressions
@@ -21,15 +25,31 @@ expressions
     ;
 
 expression
-    : expression OP term
-        { $$ = operate($OP, $expression, $term); }
+    : expression OPAD term
+        { $$ = operate($OPAD, $expression, $term); }
     | term
         { $$ = $term; }
     ;
 
 term
+    : term OPMU r
+        { $$ = operate($OPMU, $term, $r); }
+    | r
+        { $$ = $r; }
+    ;
+
+r 
+    : f OPOW r
+        { $$ = operate($OPOW, $f, $r); }
+    | f
+        { $$ = $f; }
+    ;
+
+f   
     : NUMBER
         { $$ = Number(yytext); }
+    | LPAREN expression RPAREN  
+        { $$ = $expression; }
     ;
 %%
 
